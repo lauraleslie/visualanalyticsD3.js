@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+  <title></title>
+
+
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+
+  <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+  <style>
+
+body {
+  font: 10px sans-serif;
+}
+  .chart {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+  }
+
+  .axis path, .axis line {
+    fill: none;
+    stroke: #0000ff;
+    shape-rendering: crispEdges;
+  }
+
+  .bar {
+    fill: purple;
+    z-index: 1000;
+  }
+</style>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+   var data = [{"date":"2015-10-05","total":1},{"date":"2015-10-06","total":5},{"date":"2015-10-07","total":12},{"date":"2015-10-08","total":17},{"date":"2015-10-09","total":6},{"date":"2015-10-10","total":20},{"date":"2015-10-11","total":14}];
+
+var margin = {top: 40, right: 40, bottom: 40, left:40}, 
+    width = 600,  
+    height = 500;
+
+var x = d3.time.scale() 
+    .domain([new Date(data[0].date), d3.time.day.offset(new Date(data[data.length - 1].date), 1)])
+    .rangeRound([0, width - margin.left - margin.right]); 
+
+var y = d3.scale.linear() 
+    .domain([0, d3.max(data, function(d) { return d.total;})]) 
+    .range([height - margin.top - margin.bottom, 0]); 
+
+var xAxis = d3.svg.axis() 
+    .scale(x) 
+    .orient('bottom') 
+    .ticks(d3.time.days, 1) 
+    .tickFormat(d3.time.format('%m-%d-%Y')) 
+    .tickSize(0) 
+    .tickPadding(8);
+
+var yAxis = d3.svg.axis() 
+    .scale(y) 
+    .orient('left')
+    .tickPadding(8);
+    
+var svg = d3.select('#bar-demo').append('svg') 
+    .attr('class', 'chart') 
+    .attr('width', width) 
+    .attr('height', height) 
+    .append('g') 
+    .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')'); 
+
+            
+svg.append('g') 
+    .attr('class', 'axis') 
+    .attr('transform', 'translate(0, ' + (height - margin.top - margin.bottom) + ')') 
+    .call(xAxis); 
+    
+svg.append('g') 
+  .attr('class', 'axis') 
+  .call(yAxis); 
+
+svg.selectAll('.chart') 
+    .data(data) 
+    .enter()
+    .append('rect') 
+    .attr('class', 'bar') 
+    .attr('x', function(d) { return x(new Date(d.date)); }) 
+    .attr('y', function(d) { return height - margin.top - margin.bottom - (height - margin.top - margin.bottom - y(d.total)) })
+    .attr('width', 25) 
+    .attr('height', function(d) { return height - margin.top - margin.bottom - y(d.total) }); 
+
+ svg.selectAll(".rect") 
+     .data(data) 
+   .enter().append("svg:text") 
+     .attr("x", function(d) { return x(new Date(d.date)); }) 
+     .attr("y", function(d) { return y(d.total); })
+     .attr("dx", "0.5em") 
+     .attr("dy", "1.50em") 
+     .attr("text-anchor", "left") 
+     .text(function(d) { return d.total });   
+svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "20px") 
+        .text("Totals in October");		
+});
+
+</script>
+
+</head>
+	<body>
+	<div id="bar-demo"  style="position: relative; top: 3px; left: 20px;"></div>
+	
+</body>
+</html>
+
+
+
+
+
